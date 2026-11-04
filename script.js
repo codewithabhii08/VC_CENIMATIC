@@ -4,8 +4,8 @@
 const CONFIG = {
     whatsapp: "919623854966",
     email: "vedant.gode2826@gmail.com",
-    studioAddress: "Maharashtra, India",
-    mapQuery: "Maharashtra, India"
+    studioAddress: "Shahapur, Maharashtra, India",
+    mapQuery: "Shahapur, Maharashtra, India"
 };
 
 // Mobile navigation
