@@ -1,17 +1,11 @@
-
 /* ===================================
    VC_CENIMATIC WEBSITE CONFIGURATION
 =================================== */
-
-// Apna actual WhatsApp number aur email yahan add karo.
-// WhatsApp number: country code + mobile number, without +
-// Example: 919876543210
-
 const CONFIG = {
-    whatsapp: "91XXXXXXXXXX",
-    email: "yourmail@gmail.com",
-    studioAddress: "Your Studio Address, Maharashtra, India",
-    mapQuery: "Your Studio Address, Maharashtra, India"
+    whatsapp: "919623854966",
+    email: "vedant.gode2826@gmail.com",
+    studioAddress: "Maharashtra, India",
+    mapQuery: "Maharashtra, India"
 };
 
 // Mobile navigation
@@ -19,38 +13,34 @@ const menuBtn = document.getElementById("menuBtn");
 const navbar = document.getElementById("navbar");
 
 menuBtn.addEventListener("click", () => {
-    navbar.classList.toggle("active");
-    menuBtn.textContent = navbar.classList.contains("active") ? "✕" : "☰";
+    const isOpen = navbar.classList.toggle("active");
+    menuBtn.textContent = isOpen ? "✕" : "☰";
+    menuBtn.setAttribute("aria-expanded", String(isOpen));
+    menuBtn.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
 });
 
 navbar.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
         navbar.classList.remove("active");
         menuBtn.textContent = "☰";
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.setAttribute("aria-label", "Open navigation");
     });
 });
 
-// Booking date: past dates disabled
+// Booking date: past dates disabled using the visitor's local date
 const dateInput = document.getElementById("date");
-
 const today = new Date();
-const localDate = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0")
-].join("-");
-
-dateInput.min = localDate;
+dateInput.min = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, "0"), String(today.getDate()).padStart(2, "0")].join("-");
 
 // Service selection from service cards
 document.querySelectorAll(".service-link").forEach(link => {
     link.addEventListener("click", () => {
-        document.getElementById("service").value =
-            link.dataset.service;
+        document.getElementById("service").value = link.dataset.service;
     });
 });
 
-// Collect booking information
+// Collect and validate booking information
 function getBookingDetails() {
     const name = document.getElementById("name").value.trim();
     const phone = document.getElementById("phone").value.trim();
@@ -64,96 +54,43 @@ function getBookingDetails() {
         alert("Please fill all required booking details.");
         return null;
     }
-
     if (!/^[0-9+\-\s()]{10,16}$/.test(phone)) {
         alert("Please enter a valid mobile number.");
         return null;
     }
-
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         alert("Please enter a valid email address.");
         return null;
     }
-
     return { name, phone, email, service, date, location, message };
 }
 
-// Format booking message
 function createBookingMessage(data) {
-    return `*NEW BOOKING ENQUIRY - VC_CENIMATIC*
-
-Hello VC_CENIMATIC Team!
-
-I would like to book your service.
-
-*CUSTOMER DETAILS*
-Name: ${data.name}
-Phone: ${data.phone}
-Email: ${data.email || "Not provided"}
-
-*BOOKING DETAILS*
-Service: ${data.service}
-Preferred Date: ${data.date}
-Location: ${data.location || "Not specified"}
-
-*ADDITIONAL INFORMATION*
-${data.message || "No additional information"}
-
-Please contact me with availability and pricing.
-
-Thank you!
-VC_CENIMATIC Customer`;
+    return `*NEW BOOKING ENQUIRY - VC_CENIMATIC*\n\nHello VC_CENIMATIC Team!\n\nI would like to book your service.\n\n*CUSTOMER DETAILS*\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email || "Not provided"}\n\n*BOOKING DETAILS*\nService: ${data.service}\nPreferred Date: ${data.date}\nLocation: ${data.location || "Not specified"}\n\n*ADDITIONAL INFORMATION*\n${data.message || "No additional information"}\n\nPlease contact me with availability and pricing.\n\nThank you!\nVC_CENIMATIC Customer`;
 }
 
 // WhatsApp booking
 document.getElementById("whatsappBtn").addEventListener("click", () => {
     const data = getBookingDetails();
     if (!data) return;
-
-    if (!/^91\d{10}$/.test(CONFIG.whatsapp)) {
-        alert("Please add your correct WhatsApp number in script.js first.");
-        return;
-    }
-
     const text = encodeURIComponent(createBookingMessage(data));
-    const url = `https://wa.me/${CONFIG.whatsapp}?text=${text}`;
-
-    window.open(url, "_blank");
+    window.open(`https://wa.me/${CONFIG.whatsapp}?text=${text}`, "_blank", "noopener,noreferrer");
 });
 
 // Email booking
 document.getElementById("emailBtn").addEventListener("click", () => {
     const data = getBookingDetails();
     if (!data) return;
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(CONFIG.email)) {
-        alert("Please add your correct email address in script.js first.");
-        return;
-    }
-
-    const subject = encodeURIComponent(
-        `New Booking - ${data.service} | VC_CENIMATIC`
-    );
-
+    const subject = encodeURIComponent(`New Booking - ${data.service} | VC_CENIMATIC`);
     const body = encodeURIComponent(createBookingMessage(data));
-
-    window.location.href =
-        `mailto:${CONFIG.email}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${CONFIG.email}?subject=${subject}&body=${body}`;
 });
 
-// Contact section links
+// Contact links and current year
 const whatsappUrl = `https://wa.me/${CONFIG.whatsapp}`;
-
 document.getElementById("contactWhatsapp").href = whatsappUrl;
 document.getElementById("floatingWhatsapp").href = whatsappUrl;
-
-document.getElementById("contactEmail").href =
-    `mailto:${CONFIG.email}`;
-
-document.getElementById("studioAddress").textContent =
-    CONFIG.studioAddress;
-
-document.getElementById("directionLink").href =
-    `https://www.google.com/maps/search/?api=1&query=${
-        encodeURIComponent(CONFIG.mapQuery)
-    }`;
+document.getElementById("contactEmail").href = `mailto:${CONFIG.email}`;
+document.getElementById("studioAddress").textContent = CONFIG.studioAddress;
+document.getElementById("directionLink").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONFIG.mapQuery)}`;
+document.getElementById("currentYear").textContent = new Date().getFullYear();
